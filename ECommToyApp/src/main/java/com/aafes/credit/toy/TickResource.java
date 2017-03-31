@@ -5,8 +5,6 @@
  */
 package com.aafes.credit.toy;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -48,9 +46,6 @@ public class TickResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String processPost(String input) throws InterruptedException {
         
-        String strHostName = getHostName();
-        
-        
         String response = null;
         
         //connect
@@ -64,43 +59,23 @@ public class TickResource {
         Toy result = toyDAO.find(input);
         log.info("Result: " +result);
         
-        if (result == null)
-        {
-            //write
-            Toy toy1 = new Toy();
-            toy1.setColumn1(input);
-            toy1.setColumn2(strHostName);
-            toyDAO.save(toy1);  
-            response = input + " is not available in the table, so added now";
-        } 
-        else 
-        {
-            response = input + " is available in the table";
+        if (result == null){
+          //write
+        Toy toy1 = new Toy();
+        toy1.setColumn1(input);
+        toyDAO.save(toy1);  
+         response = input + " is not available in the table, so added now";
+        } else {
+         response = input + " is available in the table";
         }
         
         //wait 5 secs
-        TimeUnit.MICROSECONDS.sleep(50);
-        //log.info("Wait 5 seconds");
+        TimeUnit.SECONDS.sleep(1);
+        log.info("Wait 5 seconds");
          
         //return
         log.info("Return response: " +response);
         return response;
     }
 
-    private String getHostName() 
-    {
-        InetAddress ip;
-        String hostname="";
-        try {
-                ip = InetAddress.getLocalHost();
-                hostname = ip.getHostName();
-                //System.out.println("Your current IP address : " + ip);
-                //System.out.println("Your current Hostname : " + hostname);
-            } 
-        catch (UnknownHostException e) 
-        {
-            e.printStackTrace();
-        }
-        return hostname;
-    }
 }
