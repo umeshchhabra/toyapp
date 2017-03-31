@@ -17,12 +17,18 @@ public class Toy {
     
     @PartitionKey
     private String column1;
+    private String column2;
 
     /**
      * @return the column1
      */
     public String getColumn1() {
         return column1;
+    }
+    
+    public String getColumn2() 
+    {
+        return column2;
     }
 
     /**
@@ -31,9 +37,9 @@ public class Toy {
     public void setColumn1(String response) {
         this.column1 = response;
     }
-   
-    
-    
-    
-   
+
+    public void setColumn2(String strHostName) 
+    {
+        this.column2 = strHostName;
+    }
 }
