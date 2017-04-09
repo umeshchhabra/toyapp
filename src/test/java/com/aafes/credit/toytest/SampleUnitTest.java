@@ -41,17 +41,19 @@ public class SampleUnitTest {
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //
-    // @Test
+    @Test
     public void test1() 
     {
         assertEquals(1,1);
     }
     
+    @Test
     public void test2() 
     {
         assertEquals(1,1);
     }
     
+    @Test
     public void test3() 
     {
         assertEquals(1,1);
