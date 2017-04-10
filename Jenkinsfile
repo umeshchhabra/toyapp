@@ -47,7 +47,7 @@ node {
     try {
             sh "mvn test"
             //docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}").push()
-            docker.build("umeshchhabra/wildflycluster:$WF").push()
+            //docker.build("umeshchhabra/wildflycluster:$WF").push()
       
         } 
     catch (error) 
@@ -57,6 +57,23 @@ node {
     finally 
     {
       junit '**/target/surefire-reports/*.xml'
+    }
+  }
+  
+  stage('Push Image To Repo') 
+  {
+    try {
+          sh 'docker login -u $USER -p $DOCPASS'
+          //docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}").push()
+          docker.build("umeshchhabra/wildflycluster:$WF").push()
+         } 
+    catch (error) 
+    {
+
+    } 
+    finally 
+    {
+      
     }
   }
 }
