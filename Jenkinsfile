@@ -1,49 +1,52 @@
 node {
   checkout scm
   env.PATH = "${tool 'm3'}/bin:${env.PATH}"
-  stage('Package') 
+  
+  stage('Build Application') 
   {
     sh 'mvn clean package -DskipTests'
   }
-
-  stage('Create Image') 
+  
+  stage('Prepare Database') 
+  {
+    // Start database container here
+    sh 'docker login -u $USER -p $DOCPASS'
+    //docker.pull("umeshchhabra/workingdbtoyapp:$DB")
+    
+    //start db container
+    sh 'docker run --name toyappdb -d -p 9160:9160 -p 9042:9042 -p 7199:7199 -p 7001:7001 -p 7000:7000 umeshchhabra/workingdbtoyapp:$DB'
+    
+    //get ip address of Database container
+    sh "DB=`docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' toyappdb`"
+  }
+  
+  stage('Prepare Wildfly Image') 
   {
     sh 'docker login -u $USER -p $DOCPASS'
     docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}")
+    
+    //start wildfly cluster
+    sh 'docker run -d --name toyAppA -h toyAppA -p 8080  -p 7770:9990 --link umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'
+    sh 'docker run -d --name toyAppB -h toyAppB -p 8080  -p 7770:9990 --link umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'
+    sh 'docker run -d --name toyAppC -h toyAppC -p 8080  -p 7770:9990 --link umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'
   }
-
-  stage ('Run Application') 
+  
+  
+  stage('Prepare Nginx Image') 
   {
-    try 
-    {
-      // Start database container here
-      // sh 'docker run -d --name db -p 8091-8093:8091-8093 -p 11210:11210 arungupta/oreilly-couchbase:latest'
-
-      // Run application using Docker image
-      // sh "DB=`docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' db`"
-      // sh "docker run -e DB_URI=$DB arungupta/docker-jenkins-pipeline:${env.BUILD_NUMBER}"
-
-      // Run tests using Maven
-      //dir ('webapp') {
-      //  sh 'mvn exec:java -DskipTests'
-      //}
-    } 
-    catch (error) 
-    {
-    } 
-    finally {
-      // Stop and remove database container here
-      //sh 'docker-compose stop db'
-      //sh 'docker-compose rm db'
-    }
+    sh 'docker login -u $USER -p $DOCPASS'
+    docker.build("umeshchhabra/workinglbtoyapp:$LB")
+    
+    //start Nginx LB
+    sh 'docker run -d --name nginx -p 80:80 --link toyAppA:toyAppA --link toyAppB:toyAppB --link toyAppC:toyAppC umeshchhabra/workinglbtoyapp:$LB'
   }
 
-  stage('Run Tests') 
+  stage('Run Unit Tests') 
   {
     try {
             sh "mvn test"
             docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}").push()
-    } 
+        } 
     catch (error) 
     {
 
