@@ -37,7 +37,7 @@ node {
     docker.build("umeshchhabra/workinglbtoyapp:$LB")
     
     //start Nginx LB
-    sh "docker run -d --name nginx -p 80:80 --link toyAppA:toyAppA --link toyAppB:toyAppB --link toyAppC:toyAppC 'umeshchhabra/workinglbtoyapp:$LB'"
+    sh "docker run -d --name nginx -p 8080:8080 --link toyAppA:toyAppA --link toyAppB:toyAppB --link toyAppC:toyAppC 'umeshchhabra/workinglbtoyapp:$LB'"
   }
 
   stage('Run Unit Tests') 
