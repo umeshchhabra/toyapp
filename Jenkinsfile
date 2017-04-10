@@ -26,9 +26,9 @@ node {
     docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}")
         
     //start wildfly cluster
-    sh 'docker run -d --name toyAppA -h toyAppA -p 8080  -p 7770:9990 --link toyappdb umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'
-    sh 'docker run -d --name toyAppB -h toyAppB -p 8080  -p 7770:9990 --link toyappdb umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'
-    sh 'docker run -d --name toyAppC -h toyAppC -p 8080  -p 7770:9990 --link toyappdb umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'
+    sh 'docker run -d --name toyAppA -h toyAppA -p 8080  -p 7770:9990 --link toyappdb' "umeshchhabra/wildflycluster:${env.BUILD_NUMBER}"
+    sh 'docker run -d --name toyAppB -h toyAppB -p 8080  -p 7770:9990 --link toyappdb' "umeshchhabra/wildflycluster:${env.BUILD_NUMBER}"
+    sh 'docker run -d --name toyAppC -h toyAppC -p 8080  -p 7770:9990 --link toyappdb' "umeshchhabra/wildflycluster:${env.BUILD_NUMBER}"
   }
     
   stage('Prepare Nginx Image') 
