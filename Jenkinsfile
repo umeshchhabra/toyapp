@@ -23,12 +23,14 @@ node {
   stage('Prepare Wildfly Image') 
   {
     sh 'docker login -u $USER -p $DOCPASS'
-    docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}")
+    // docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}")
+    docker.build("umeshchhabra/wildflycluster:$WF")
         
     //start wildfly cluster
-    sh "docker run -d --name toyAppA -h toyAppA -p 8080  -p 7770:9990 --link toyappdb 'umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'"
-    sh "docker run -d --name toyAppB -h toyAppB -p 8080  -p 7772:9990 --link toyappdb 'umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'"
-    sh "docker run -d --name toyAppC -h toyAppC -p 8080  -p 7774:9990 --link toyappdb 'umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'"
+    //sh "docker run -d --name toyAppA -h toyAppA -p 8080  -p 7770:9990 --link toyappdb 'umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'"
+    sh "docker run -d --name toyAppA -h toyAppA -p 8080  -p 7770:9990 --link toyappdb umeshchhabra/wildflycluster:$WF"
+    sh "docker run -d --name toyAppB -h toyAppB -p 8080  -p 7772:9990 --link toyappdb umeshchhabra/wildflycluster:$WF"
+    sh "docker run -d --name toyAppC -h toyAppC -p 8080  -p 7774:9990 --link toyappdb umeshchhabra/wildflycluster:$WF"
   }
     
   stage('Prepare Nginx Image') 
@@ -44,7 +46,9 @@ node {
   {
     try {
             sh "mvn test"
-            docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}").push()
+            //docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}").push()
+            docker.build("umeshchhabra/wildflycluster:$WF").push()
+      
         } 
     catch (error) 
     {
