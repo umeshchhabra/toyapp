@@ -8,7 +8,7 @@ node {
 
   stage('Create Image') 
   {
-    // sh 'docker login -u $USER -p $PWD'
+    sh 'docker login -u $USER -p $DOCPASS'
     docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}")
   }
 
