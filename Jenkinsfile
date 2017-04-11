@@ -7,7 +7,7 @@ node
   
   stage('Build Application') 
   {
-    ssh 'root@buildbox'
+    sh 'ssh root@buildbox'
     sh 'mvn clean package -DskipTests'
   }
   
