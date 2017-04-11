@@ -1,11 +1,13 @@
 node 
 {
-  ssh 'root@buildbox'
   checkout scm
+  
+  
   env.PATH = "/usr/share/maven/bin:${env.PATH}"
   
   stage('Build Application') 
   {
+    ssh root@buildbox
     sh 'mvn clean package -DskipTests'
   }
   
