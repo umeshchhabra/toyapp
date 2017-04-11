@@ -1,6 +1,8 @@
-node {
+node 
+{
+  ssh 'root@buildbox'
   checkout scm
-  env.PATH = "${tool 'm3'}/bin:${env.PATH}"
+  env.PATH = "/usr/share/maven/bin:${env.PATH}"
   
   stage('Build Application') 
   {
@@ -28,20 +30,8 @@ node {
         
     //start wildfly cluster
     //sh "docker run -d --name toyAppA -h toyAppA -p 8080  -p 7770:9990 --link toyappdb 'umeshchhabra/wildflycluster:${env.BUILD_NUMBER}'"
-    sh "docker run -d --name toyAppA -h toyAppA -p 8080  -p 7770:9990 --link toyappdb umeshchhabra/wildflycluster:$WF"
-    sh "docker run -d --name toyAppB -h toyAppB -p 8080  -p 7772:9990 --link toyappdb umeshchhabra/wildflycluster:$WF"
-    sh "docker run -d --name toyAppC -h toyAppC -p 8080  -p 7774:9990 --link toyappdb umeshchhabra/wildflycluster:$WF"
+    sh "docker run -d --name toyAppA -h toyAppA -p 8080  -p 7770:9990 --link toyappdb umeshchhabra/wildflycluster:$WF"    
   }
-    
-  stage('Prepare Nginx Image') 
-  {
-    sh 'docker login -u $USER -p $DOCPASS'
-    docker.build("umeshchhabra/workinglbtoyapp:$LB")
-    
-    //start Nginx LB
-    sh "docker run -d --name nginx -p 8080:8080 --link toyAppA:toyAppA --link toyAppB:toyAppB --link toyAppC:toyAppC 'umeshchhabra/workinglbtoyapp:$LB'"
-  }
-
   stage('Run Unit Tests') 
   {
     try {
