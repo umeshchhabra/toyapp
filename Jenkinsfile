@@ -7,7 +7,7 @@ node
   
   stage('Build Application') 
   {
-    sh 'ssh -T root@buildbox'
+    sh 'ssh -T chhabrau@192.168.207.73'
     sh 'mvn clean package -DskipTests'
   }
   
@@ -38,9 +38,6 @@ node
   {
     try {
             sh "mvn test"
-            //docker.build("umeshchhabra/wildflycluster:${env.BUILD_NUMBER}").push()
-            //docker.build("umeshchhabra/wildflycluster:$WF").push()
-      
         } 
     catch (error) 
     {
